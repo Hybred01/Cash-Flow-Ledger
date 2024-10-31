@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Cash Flow Ledger</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            text-align: center;
+            overflow: hidden; /* Prevent scrolling during animation */
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin-top: 20vh;
+            opacity: 0;
+            transform: translateY(-50px);
+            transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+        }
+
+        .options {
+            margin-top: 30px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s ease-in-out 0.5s, transform 1s ease-in-out 0.5s;
+        }
+
+        button {
+            background-color: #007acc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 15px 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 10px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #005fa3;
+        }
+
+        /* Animation for the text */
+        @keyframes slideIn {
+            0% {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            50% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1 id="cfl">CFL</h1>
+    <div class="options" id="options">
+        <h2>Welcome to Cash Flow Ledger</h2>
+        <p>Choose an option to get started:</p>
+        <button id="signupBtn">Sign Up with Email</button>
+        <button id="loginBtn">Log In with Email</button>
+        <button id="googleBtn">Sign In with Google</button>
+    </div>
+
+    <script>
+        // Animation for "CFL" text
+        const cflText = document.getElementById('cfl');
+        const options = document.getElementById('options');
+
+        // Function to animate the "CFL" text
+        function animateCFL() {
+            cflText.style.opacity = 1;
+            cflText.style.transform = 'translateY(0)';
+            cflText.style.animation = 'slideIn 1s forwards';
+            setTimeout(() => {
+                options.style.opacity = 1;
+                options.style.transform = 'translateY(0)';
+            }, 1000); // Delay for options to appear
+        }
+
+        animateCFL();
+
+        // Local storage utility functions
+        function saveUserData(email) {
+            const userData = {
+                email: email,
+                loggedIn: true
+            };
+            localStorage.setItem('user', JSON.stringify(userData));
+        }
+
+        // Handle Sign Up
+        document.getElementById('signupBtn').addEventListener('click', () => {
+            const email = prompt("Please enter your email for sign-up:");
+            if (email) {
+                saveUserData(email);
+                alert("Sign-up successful!");
+                // Redirect to main application or dashboard here
+                window.location.href = "index.html";
+            } else {
+                alert("Email is required for sign-up.");
+            }
+        });
+
+        // Handle Log In
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            const email = prompt("Please enter your email to log in:");
+            const userData = JSON.parse(localStorage.getItem('user'));
+            if (userData && userData.email === email) {
+                alert("Log in successful!");
+                // Redirect to main application or dashboard here
+                window.location.href = "index.html";
+            } else {
+                alert("Email not found. Please sign up.");
+            }
+        });
+
+        // Handle Google Sign-In (dummy implementation)
+        document.getElementById('googleBtn').addEventListener('click', () => {
+            // Simulate Google Sign-In
+            const googleEmail = "user@example.com"; // Simulated Google email
+            saveUserData(googleEmail);
+            alert("Google Sign-In successful!");
+            // Redirect to main application or dashboard here
+            window.location.href = "index.html";
+        });
+    </script>
+</body>
+
+</html>

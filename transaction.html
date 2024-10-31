@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Transaction</title>
+  
+  <style>
+    /* Basic styling */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      color: #333;
+      padding: 1rem;
+      overflow-y: scroll;
+      height: 100vh;
+    }
+
+    header {
+      text-align: center;
+      padding: 1rem;
+      background-color: #007acc;
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    nav a {
+      margin: 0 15px;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s, color 0.3s;
+      padding: 8px 12px;
+      border-radius: 5px;
+    }
+
+    nav a:hover {
+      background-color: #005f8c;
+      color: #fff;
+    }
+
+    main {
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .transaction-form {
+      margin-top: 2rem;
+    }
+
+    .tile {
+      padding: 1.5rem;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 1.5rem;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+
+    .tile:hover {
+      transform: scale(1.03);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+    }
+
+    .tile h3 {
+      margin-bottom: 0.5rem;
+    }
+
+    label,
+    input,
+    button,
+    textarea,
+    select {
+      display: block;
+      margin: 0.5rem auto;
+      width: 80%;
+    }
+
+    input,
+    textarea,
+    select {
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 0.8rem 1.5rem;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    .expense-summary {
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 1.2rem;
+    }
+
+    .digital-clock {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 48px;
+      color: #0f0;
+      text-shadow: 0 0 5px #0f0, 0 0 10px #0f0, 0 0 15px #0f0;
+      margin: 1rem auto;
+      padding: 10px;
+      background-color: #000;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Add Transaction</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="categories.html">Categories</a>
+      <a href="report.html">Report</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="transaction-form">
+      <h2>Category: <span id="transaction-category">Loading...</span></h2>
+
+      <!-- Amount input -->
+      <div class="tile">
+        <h3>💵 Amount</h3>
+        <label for="amount">Enter Amount (UGX):</label>
+        <input type="number" id="amount" placeholder="Enter amount" required>
+      </div>
+
+      <!-- Note input -->
+      <div class="tile">
+        <h3>📝 Note</h3>
+        <label for="note">Add a note for this transaction:</label>
+        <textarea id="note" rows="3" placeholder="Add a note"></textarea>
+      </div>
+
+      <!-- Date input -->
+      <div class="tile">
+        <h3>📅 Date</h3>
+        <label for="date">Select Date:</label>
+        <input type="date" id="date" required>
+      </div>
+
+      <!-- Digital clock for setting reminder -->
+      <div class="tile">
+        <h3>⏰ Set Reminder Time</h3>
+        <div class="digital-clock" id="digital-clock">00:00</div>
+        <input type="time" id="reminder-time" required>
+      </div>
+
+      <button onclick="addTransaction()">Add Expense</button>
+    </section>
+
+    <section class="expense-summary">
+      <h3>Total Expenses</h3>
+      <p id="expense-total">UGX 0.00</p>
+    </section>
+  </main>
+  <footer>
+    <p>&copy; 2024 Cash Flow Ledger. All rights reserved.</p>
+</footer>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const category = urlParams.get("category");
+    document.getElementById("transaction-category").innerText = category;
+
+    // Load total expense from localStorage
+    let totalExpense = parseFloat(localStorage.getItem('totalExpense')) || 0;
+    document.getElementById("expense-total").innerText = `UGX ${totalExpense.toFixed(2)}`;
+
+    function addTransaction() {
+      const amount = parseFloat(document.getElementById("amount").value);
+      const note = document.getElementById("note").value;
+      const date = document.getElementById("date").value;
+      const reminderTime = document.getElementById("reminder-time").value;
+
+      if (amount > 0 && date) {
+        totalExpense += amount;
+        document.getElementById("expense-total").innerText = `UGX ${totalExpense.toFixed(2)}`;
+        
+        // Save updated expense to localStorage
+        localStorage.setItem('totalExpense', totalExpense);
+
+        // Retrieve previous transactions and add the new one
+        const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+        transactions.push({
+          category,
+          amount,
+          note,
+          date,
+          reminderTime
+        });
+        localStorage.setItem('transactions', JSON.stringify(transactions));
+
+        // Clear input fields
+        document.getElementById("amount").value = "";
+        document.getElementById("note").value = "";
+        document.getElementById("date").value = "";
+
+        alert(`Added ${category} expense of UGX ${amount.toFixed(2)}\nNote: ${note}\nDate: ${date}\nReminder Time: ${reminderTime}`);
+      } else {
+        alert("Please enter a valid amount and date.");
+      }
+    }
+
+    // Display digital clock based on selected reminder time
+    document.getElementById("reminder-time").addEventListener("input", function () {
+      const time = this.value.split(":");
+      const hours = time[0];
+      const minutes = time[1];
+      document.getElementById("digital-clock").innerText = `${hours}:${minutes}`;
+    });
+
+    // Update digital clock every minute
+    function updateClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById("digital-clock").innerText = `${hours}:${minutes}`;
+    }
+
+    setInterval(updateClock, 60000);
+    updateClock();
+  </script>
+</body>
+
+</html>

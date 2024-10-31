@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categories</title>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <header>
+    <h1>Categories</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="categories.html">Categories</a>
+      <a href="report.html">Report</a>
+      <a href="transaction.html">Transaction</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="categories">
+      <!-- Health Group Tile -->
+      <div class="group-tile">
+        <h2>Health</h2>
+        <div class="inner-tile" onclick="redirectToTransaction('Doctor')">
+          <i class="fas fa-user-md"></i>
+          <p>Doctor</p>
+        </div>
+        <div class="inner-tile" onclick="redirectToTransaction('Medicine')">
+          <i class="fas fa-prescription-bottle-alt"></i>
+          <p>Medicine</p>
+        </div>
+      </div>
+
+      <!-- Food & Shopping Group Tile -->
+      <div class="group-tile">
+        <h2>Food & Shopping</h2>
+        <div class="inner-tile" onclick="redirectToTransaction('Grocery')">
+          <i class="fas fa-shopping-basket"></i>
+          <p>Grocery</p>
+        </div>
+        <div class="inner-tile" onclick="redirectToTransaction('Tea & Coffee')">
+          <i class="fas fa-coffee"></i>
+          <p>Tea & Coffee</p>
+        </div>
+        <div class="inner-tile" onclick="redirectToTransaction('Drinks')">
+          <i class="fas fa-glass-cheers"></i>
+          <p>Drinks</p>
+        </div>
+        <div class="inner-tile" onclick="redirectToTransaction('Restaurants & Food')">
+          <i class="fas fa-utensils"></i>
+          <p>Restaurants</p>
+        </div>
+      </div>
+
+      <!-- Bills & Utilities Group Tile -->
+      <div class="group-tile">
+        <h2>Bills & Utilities</h2>
+        <div class="inner-tile" onclick="redirectToTransaction('Phone Bill')">
+          <i class="fas fa-phone"></i>
+          <p>Phone Bill</p>
+        </div>
+        <div class="inner-tile" onclick="redirectToTransaction('Water Bill')">
+          <i class="fas fa-tint"></i>
+          <p>Water Bill</p>
+        </div>
+        <div class="inner-tile" onclick="redirectToTransaction('Gas Bill')">
+          <i class="fas fa-fire"></i>
+          <p>Gas Bill</p>
+        </div>
+        <div class="inner-tile" onclick="redirectToTransaction('Internet Bill')">
+          <i class="fas fa-wifi"></i>
+          <p>Internet Bill</p>
+        </div>
+        <div class="inner-tile" onclick="redirectToTransaction('Rent')">
+          <i class="fas fa-home"></i>
+          <p>Rent</p>
+        </div>
+        <div class="inner-tile" onclick="redirectToTransaction('TV Bill')">
+          <i class="fas fa-tv"></i>
+          <p>TV Bill</p>
+        </div>
+        <div class="inner-tile" onclick="redirectToTransaction('Electricity Bill')">
+          <i class="fas fa-bolt"></i>
+          <p>Electricity Bill</p>
+        </div>
+      </div>
+
+      <!-- Family Group Tile -->
+      <div class="group-tile">
+        <h2>Family</h2>
+        <div class="inner-tile" onclick="redirectToTransaction('Marriage')">
+          <i class="fas fa-ring"></i>
+          <p>Marriage</p>
+        </div>
+        <div class="inner-tile" onclick="redirectToTransaction('Funeral')">
+          <i class="fas fa-cross"></i>
+          <p>Funeral</p>
+        </div>
+        <div class="inner-tile" onclick="redirectToTransaction('Charity')">
+          <i class="fas fa-hand-holding-heart"></i>
+          <p>Charity</p>
+        </div>
+      </div>
+
+      <!-- Shopping Group Tile -->
+      <div class="group-tile">
+        <h2>Shopping</h2>
+        <div class="inner-tile" onclick="redirectToTransaction('Clothing')">
+          <i class="fas fa-tshirt"></i>
+          <p>Clothing</p>
+        </div>
+        <div class="inner-tile" onclick="redirectToTransaction('Footwear')">
+          <i class="fas fa-shoe-prints"></i>
+          <p>Footwear</p>
+        </div>
+        <div class="inner-tile" onclick="redirectToTransaction('Gadgets')">
+          <i class="fas fa-mobile-alt"></i>
+          <p>Gadgets</p>
+        </div>
+        <div class="inner-tile" onclick="redirectToTransaction('Electronics')">
+          <i class="fas fa-tv"></i>
+          <p>Electronics</p>
+        </div>
+        <div class="inner-tile" onclick="redirectToTransaction('Furniture')">
+          <i class="fas fa-couch"></i>
+          <p>Furniture</p>
+        </div>
+        <div class="inner-tile" onclick="redirectToTransaction('Vehicles')">
+          <i class="fas fa-car"></i>
+          <p>Vehicles</p>
+        </div>
+        <div class="inner-tile" onclick="redirectToTransaction('Accessories')">
+          <i class="fas fa-user-secret"></i>
+          <p>Accessories</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <p>&copy; 2024 Cash Flow Ledger. All rights reserved.</p>
+</footer>
+
+  <script>
+    function redirectToTransaction(category) {
+      // Redirect to the transaction page and pass the category name as a URL parameter
+      window.location.href = `transaction.html?category=${encodeURIComponent(category)}`;
+    }
+  </script>
+</body>
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #007acc;
+    color: white;
+  }
+
+  header h1 {
+    font-size: 1.5rem;
+  }
+
+  header nav a {
+    margin-left: 1rem;
+    color: white;
+    text-decoration: none;
+  }
+
+  main {
+    padding: 1rem;
+    max-width: 1200px;
+    margin: auto;
+  }
+
+  .categories {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .group-tile {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .group-tile h2 {
+    font-size: 1.2rem;
+    color: #007acc;
+    margin-bottom: 1rem;
+  }
+
+  .inner-tile {
+    display: inline-block;
+    background-color: #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+    margin: 0.5rem;
+    cursor: pointer;
+  }
+
+  .inner-tile:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    background-color: rgba(255, 215, 0, 0.5); /* Fluorescent effect */
+  }
+
+  .inner-tile i {
+    font-size: 1.5rem;
+    color: #007acc;
+  }
+
+  .inner-tile p {
+    margin-top: 0.5rem;
+    color: rgba(255, 215, 0, 1); /* Fluorescent color */
+    font-weight: bold;
+  }
+</style>
+
+</html>

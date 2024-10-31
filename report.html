@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Tracker Report</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: #007acc;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+        }
+
+        header button {
+            background-color: #005f8c;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        header button:hover {
+            background-color: #00466b;
+        }
+
+        main {
+            padding: 1rem;
+            flex: 1;
+        }
+
+        section {
+            margin-bottom: 1.5rem;
+        }
+
+        .time-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .filter-tile {
+            flex: 1;
+            padding: 1rem;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .filter-tile:hover {
+            transform: scale(1.05);
+            background-color: #e9f1f7;
+        }
+
+        .summary {
+            padding: 1rem;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        .summary h2 {
+            margin-bottom: 0.5rem;
+            color: #007acc;
+        }
+
+        .chart-container {
+            position: relative;
+            margin-top: 1rem;
+            width: 100%;
+            height: 300px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .wide-tile {
+            display: none;
+            padding: 1rem;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-top: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        th,
+        td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid #ccc;
+        }
+
+        th {
+            background-color: #007acc;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .delete-button {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+        .delete-button:hover {
+            background-color: #c9302c;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Report</h1>
+        <button onclick="goBack()">Back</button>
+    </header>
+
+    <main>
+        <aside class="calendar">
+            <input type="date" id="report-date">
+        </aside>
+
+        <section class="report-content">
+            <div class="time-filters">
+                <div class="filter-tile" onclick="filterReport('week')">
+                    <h3>This Week</h3>
+                </div>
+                <div class="filter-tile" onclick="filterReport('month')">
+                    <h3>This Month</h3>
+                </div>
+                <div class="filter-tile" onclick="filterReport('year')">
+                    <h3>This Year</h3>
+                </div>
+            </div>
+
+            <div class="summary">
+                <h2>Total Balance</h2>
+                <p id="report-balance">UGX 0.00</p>
+            </div>
+
+            <!-- Wide Tile for displaying detailed report -->
+            <div class="wide-tile" id="wide-tile">
+                <div class="income-summary">
+                    <h3>Income</h3>
+                    <p>Total: <span id="report-income">UGX 0.00</span></p>
+                </div>
+
+                <div class="expense-summary">
+                    <h3>Expense</h3>
+                    <p>Total: <span id="report-expense">UGX 0.00</span></p>
+                </div>
+
+                <!-- Pie Chart Container -->
+                <div class="chart-container">
+                    <canvas id="incomeExpenseChart"></canvas>
+                </div>
+
+                <!-- Transaction Table -->
+                <div class="transaction-table">
+                    <h3>Transaction History</h3>
+                    <table id="transactions-table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Amount (UGX)</th>
+                                <th>Note</th>
+                                <th>Date</th>
+                                <th>Reminder Time</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactions-body">
+                            <!-- Transaction rows will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Delete All Transactions Button -->
+                <button class="delete-button" onclick="deleteAllTransactions()">Delete All Transactions</button>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Cash Flow Ledger. All rights reserved.</p>
+    </footer>
+
+    <script src="js/charts.js"></script>
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+
+        function deleteAllTransactions() {
+            if (confirm("Are you sure you want to delete all transactions? This action cannot be undone.")) {
+                localStorage.removeItem('transactions');
+                localStorage.removeItem('totalExpense'); // Clear total expense if necessary
+                alert("All transactions have been deleted.");
+                loadFilteredTransactions([]); // Refresh the display
+            }
+        }
+
+        function deleteTransaction(index) {
+            const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+            if (confirm("Are you sure you want to delete this transaction? This action cannot be undone.")) {
+                transactions.splice(index, 1); // Remove the specific transaction
+                localStorage.setItem('transactions', JSON.stringify(transactions)); // Update local storage
+                loadFilteredTransactions(transactions); // Refresh the display
+                alert("Transaction deleted.");
+            }
+        }
+
+        function filterReport(timePeriod) {
+            const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+            let filteredTransactions = [];
+            const now = new Date();
+
+            // Filter transactions based on the selected time period
+            if (timePeriod === 'week') {
+                const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
+                filteredTransactions = transactions.filter(transaction => new Date(transaction.date) >= startOfWeek);
+            } else if (timePeriod === 'month') {
+                const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+                filteredTransactions = transactions.filter(transaction => new Date(transaction.date) >= startOfMonth);
+            } else if (timePeriod === 'year') {
+                const startOfYear = new Date(now.getFullYear(), 0, 1);
+                filteredTransactions = transactions.filter(transaction => new Date(transaction.date) >= startOfYear);
+            }
+
+            // Load filtered transactions and update chart
+            loadFilteredTransactions(filteredTransactions);
+        }
+
+        function loadFilteredTransactions(transactions) {
+            let totalIncome = 0;
+            let totalExpense = 0;
+
+            const transactionsBody = document.getElementById("transactions-body");
+            transactionsBody.innerHTML = ""; // Clear previous rows
+
+            transactions.forEach((transaction, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${transaction.category || "N/A"}</td>
+                    <td>${transaction.amount.toFixed(2)}</td>
+                    <td>${transaction.note || "N/A"}</td>
+                    <td>${new Date(transaction.date).toLocaleDateString()}</td>
+                    <td>${transaction.reminderTime || "N/A"}</td>
+                    <td>
+                        <button class="delete-transaction" onclick="deleteTransaction(${index})">Delete</button>
+                    </td>
+                `;
+                transactionsBody.appendChild(row);
+
+                // Update totals
+                totalIncome += Math.max(0, transaction.amount); // Assuming positive amounts are income
+                totalExpense += Math.min(0, transaction.amount); // Assuming negative amounts are expenses
+            });
+
+            document.getElementById("report-balance").textContent = `UGX ${(totalIncome + totalExpense).toFixed(2)}`;
+            document.getElementById("report-income").textContent = `UGX ${totalIncome.toFixed(2)}`;
+            document.getElementById("report-expense").textContent = `UGX ${Math.abs(totalExpense).toFixed(2)}`;
+
+            // Render pie chart
+            renderChart(totalIncome, Math.abs(totalExpense));
+            document.getElementById("wide-tile").style.display = 'block'; // Show the wide tile when a filter is applied
+        }
+
+        function renderChart(income, expense) {
+            const ctx = document.getElementById('incomeExpenseChart').getContext('2d');
+            const data = {
+                labels: ['Income', 'Expense'],
+                datasets: [{
+                    label: 'Income vs Expense',
+                    data: [income, expense],
+                    backgroundColor: ['#28a745', '#dc3545'],
+                    hoverOffset: 4
+                }]
+            };
+
+            const options = {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += context.raw.toFixed(2);
+                                return label;
+                            }
+                        }
+                    }
+                }
+            };
+
+            // Create pie chart
+            new Chart(ctx, {
+                type: 'pie',
+                data: data,
+                options: options
+            });
+        }
+
+        // Call loadTransactions on page load
+        window.onload = function () {
+            const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+            loadFilteredTransactions(transactions);
+        };
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CASH FLOW LEDGER</title>
+  <style>
+    /* Main CSS */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      color: #333;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background-color: #007acc;
+      color: white;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+    }
+
+    header nav a {
+      margin-left: 1rem;
+      color: white;
+      text-decoration: none;
+    }
+
+    main {
+      padding: 1rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    section {
+      margin-bottom: 1.5rem;
+    }
+
+    .income-expense {
+      display: flex;
+      gap: 1rem;
+      justify-content: space-between;
+    }
+
+    .tile {
+      flex: 1;
+      padding: 2rem;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .tile:hover {
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .tile.income {
+      color: #2e8b57;
+      background: #e0ffe0;
+      border: 2px solid #2e8b57;
+    }
+
+    .tile.expense {
+      color: #d9534f;
+      background: #ffe0e0;
+      border: 2px solid #d9534f;
+    }
+
+    .budget-tile {
+      color: #f0ad4e;
+      background: #fff2e0;
+      border: 2px solid #f0ad4e;
+      padding: 3rem;
+    }
+
+    .input-popup {
+      display: none;
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translate(-50%, -20%);
+      background-color: #fff;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 100;
+    }
+
+    button {
+      margin-top: 1rem;
+      padding: 0.8rem 2rem;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    #charts {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .chart-tile {
+      flex: 1;
+      padding: 2rem;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>CASH FLOW LEDGER</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="transaction.html">Transactions</a>
+      <a href="report.html">Report</a>
+      <a href="categories.html">Categories</a>
+      <a href="About.html">About</a>
+    </nav>
+  </header>
+  
+  <main>
+    <section class="balance">
+      <h2>Account Balance</h2>
+      <p id="balance">UGX 0.00</p>
+    </section>
+
+    <section class="income-expense">
+      <div class="tile income" onclick="toggleIncomeInput()">
+        <h3>Income</h3>
+        <p id="income-total">UGX 0.00</p>
+      </div>
+      <div class="tile expense" onclick="toggleExpenseInput()">
+        <h3>Expense</h3>
+        <p id="expense-total">UGX 0.00</p>
+      </div>
+    </section>
+
+    <section class="budget-section">
+      <h3>Budget</h3>
+      <div class="tile budget-tile" onclick="toggleBudgetInput()">
+        <p id="budget-timeframe">Monthly Budget</p>
+        <button onclick="switchBudgetView(event)">Switch View</button>
+        <p id="budget-amount">UGX 0.00</p>
+      </div>
+      <div id="budget-input-popup" class="tile input-popup">
+        <h4>Set Budget for <span id="budget-timeframe-label">Monthly</span></h4>
+        <input type="number" id="budget-input" placeholder="Enter budget amount">
+        <button onclick="setBudget()">Save</button>
+      </div>
+    </section>
+
+    <div id="income-input-popup" class="tile input-popup">
+      <h4>Enter Income</h4>
+      <input type="number" id="income-amount" placeholder="Enter income amount">
+      <label for="income-date">Select Date</label>
+      <input type="date" id="income-date">
+      <button onclick="addIncome()">Save</button>
+    </div>
+
+    <div id="expense-input-popup" class="tile input-popup">
+      <h4>Enter Expense</h4>
+      <input type="number" id="expense-amount" placeholder="Enter expense amount">
+      <label for="expense-date">Select Date</label>
+      <input type="date" id="expense-date">
+      <button onclick="addExpense()">Save</button>
+    </div>
+
+    <section class="transactions">
+      <h3>Recent Transactions</h3>
+      <ul id="transaction-list">
+        <!-- Transactions will be dynamically loaded here -->
+      </ul>
+    </section>
+
+    <div id="charts">
+      <div class="chart-tile">
+        <h3>Income Over the Week</h3>
+        <canvas id="incomeChart"></canvas>
+      </div>
+      <div class="chart-tile">
+        <h3>Expenses Over the Week</h3>
+        <canvas id="expenseChart"></canvas>
+      </div>
+    </div>
+
+    <button onclick="viewReport()">View Report</button>
+    <button onclick="resetAll()">Reset All</button> <!-- Reset All Button -->
+  </main>
+  <footer>
+    <p>&copy; 2024 Cash Flow Ledger. All rights reserved.</p>
+</footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    let budgetTimeframe = 'monthly';
+
+    function loadFromStorage() {
+      // Load income, expense, budget from localStorage
+      let incomeTotal = parseFloat(localStorage.getItem('incomeTotal')) || 0;
+      let expenseTotal = parseFloat(localStorage.getItem('expenseTotal')) || 0;
+      let budgetAmount = parseFloat(localStorage.getItem('budgetAmount')) || 0;
+
+      document.getElementById("income-total").innerText = `UGX ${incomeTotal.toFixed(2)}`;
+      document.getElementById("expense-total").innerText = `UGX ${expenseTotal.toFixed(2)}`;
+      document.getElementById("budget-amount").innerText = `UGX ${budgetAmount.toFixed(2)}`;
+      updateBalance(incomeTotal, expenseTotal);
+      renderCharts(); // Load charts after loading data
+    }
+
+    function toggleIncomeInput() {
+      const incomePopup = document.getElementById("income-input-popup");
+      incomePopup.style.display = incomePopup.style.display === "block" ? "none" : "block";
+    }
+
+    function addIncome() {
+      const amount = parseFloat(document.getElementById("income-amount").value);
+      const date = document.getElementById("income-date").value;
+      if (!isNaN(amount) && amount > 0 && date) {
+        let incomeTotal = parseFloat(localStorage.getItem('incomeTotal')) || 0;
+        incomeTotal += amount;
+        localStorage.setItem('incomeTotal', incomeTotal); // Persist income
+        document.getElementById("income-total").innerText = `UGX ${incomeTotal.toFixed(2)}`;
+        updateBalance(incomeTotal, parseFloat(localStorage.getItem('expenseTotal')) || 0);
+        addTransactionToHistory(`Income: UGX ${amount.toFixed(2)}`, date, 'income');
+        document.getElementById("income-input-popup").style.display = "none";
+      }
+    }
+
+    function toggleExpenseInput() {
+      const expensePopup = document.getElementById("expense-input-popup");
+      expensePopup.style.display = expensePopup.style.display === "block" ? "none" : "block";
+    }
+
+    function addExpense() {
+      const amount = parseFloat(document.getElementById("expense-amount").value);
+      const date = document.getElementById("expense-date").value;
+      if (!isNaN(amount) && amount > 0 && date) {
+        let expenseTotal = parseFloat(localStorage.getItem('expenseTotal')) || 0;
+        expenseTotal += amount;
+        localStorage.setItem('expenseTotal', expenseTotal); // Persist expense
+        document.getElementById("expense-total").innerText = `UGX ${expenseTotal.toFixed(2)}`;
+        updateBalance(parseFloat(localStorage.getItem('incomeTotal')) || 0, expenseTotal);
+        addTransactionToHistory(`Expense: UGX ${amount.toFixed(2)}`, date, 'expense');
+        document.getElementById("expense-input-popup").style.display = "none";
+      }
+    }
+
+    function updateBalance(income, expenses) {
+      const balance = income - expenses;
+      document.getElementById("balance").innerText = `UGX ${balance.toFixed(2)}`;
+    }
+
+    function addTransactionToHistory(transaction, date, type) {
+      const transactionList = document.getElementById("transaction-list");
+      const listItem = document.createElement("li");
+      listItem.textContent = `${transaction} on ${new Date(date).toLocaleDateString()}`;
+      listItem.className = type; // Add class based on type
+      transactionList.appendChild(listItem);
+    }
+
+    function setBudget() {
+      const budgetAmount = parseFloat(document.getElementById("budget-input").value);
+      if (!isNaN(budgetAmount) && budgetAmount >= 0) {
+        localStorage.setItem('budgetAmount', budgetAmount);
+        document.getElementById("budget-amount").innerText = `UGX ${budgetAmount.toFixed(2)}`;
+        document.getElementById("budget-input-popup").style.display = "none";
+      }
+    }
+
+    function toggleBudgetInput() {
+      const budgetPopup = document.getElementById("budget-input-popup");
+      budgetPopup.style.display = budgetPopup.style.display === "block" ? "none" : "block";
+    }
+
+    function switchBudgetView(event) {
+      event.stopPropagation(); // Prevent triggering the tile click
+      budgetTimeframe = budgetTimeframe === 'monthly' ? 'weekly' : 'monthly';
+      document.getElementById("budget-timeframe-label").innerText = budgetTimeframe.charAt(0).toUpperCase() + budgetTimeframe.slice(1);
+    }
+
+    function renderCharts() {
+      // Render charts for income and expenses
+      const incomeChartCtx = document.getElementById('incomeChart').getContext('2d');
+      const expenseChartCtx = document.getElementById('expenseChart').getContext('2d');
+
+      const incomeData = {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [{
+          label: 'Income',
+          data: [12, 19, 3, 5, 2, 3, 7], // Example data, replace with actual income data
+          backgroundColor: 'rgba(46, 139, 87, 0.2)',
+          borderColor: 'rgba(46, 139, 87, 1)',
+          borderWidth: 1
+        }]
+      };
+
+      const expenseData = {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [{
+          label: 'Expenses',
+          data: [2, 3, 20, 5, 2, 1, 4], // Example data, replace with actual expense data
+          backgroundColor: 'rgba(217, 53, 51, 0.2)',
+          borderColor: 'rgba(217, 53, 51, 1)',
+          borderWidth: 1
+        }]
+      };
+
+      new Chart(incomeChartCtx, {
+        type: 'line',
+        data: incomeData,
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+
+      new Chart(expenseChartCtx, {
+        type: 'line',
+        data: expenseData,
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+
+    function viewReport() {
+      // Logic to view report
+      alert("View report functionality to be implemented.");
+    }
+
+    function resetAll() {
+      // Clear localStorage
+      localStorage.clear();
+      // Reload the page to reflect the changes
+      location.reload();
+    }
+
+    document.addEventListener("DOMContentLoaded", loadFromStorage);
+  </script>
+</body>
+
+</html>
